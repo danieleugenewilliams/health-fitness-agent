@@ -1,0 +1,46 @@
+# Health data — never commit
+app/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# User-specific directories with PHI/PII
+daniel/
+christine/
+apollo/
+health-plan/
+
+# Exported health data
+*.csv
+*.pdf
+*.docx
+*.doc
+
+# Logs
+logs/
+*.log
+
+# Config with secrets
+.env
+.env.*
+config.local.md
+telegram_config.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+venv/
+.venv/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

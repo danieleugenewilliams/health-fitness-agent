@@ -1,0 +1,2158 @@
+/* CSS Variables */
+:root {
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success-color: #16a34a;
+    --warning-color: #d97706;
+    --danger-color: #dc2626;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Header */
+header {
+    background: var(--card-bg);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.user-selector select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: var(--card-bg);
+    cursor: pointer;
+}
+
+/* Navigation Tabs */
+.tabs {
+    background: var(--card-bg);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    color: var(--text-color);
+}
+
+.tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Main Content */
+main {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Metrics Card */
+.metric-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.metric {
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.metric-unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Goals Card */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.goal {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.goal:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.goal-label {
+    font-weight: 500;
+}
+
+.goal-values {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.goal-current {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--bg-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-fill.on-track {
+    background: var(--success-color);
+}
+
+.progress-fill.close {
+    background: var(--warning-color);
+}
+
+.progress-fill.off-track {
+    background: var(--danger-color);
+}
+
+.goal-remaining {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ASCVD Risk Card */
+.ascvd-score {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.ascvd-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.ascvd-percent {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+
+.ascvd-category {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    display: inline-block;
+    width: 100%;
+}
+
+.ascvd-category.low {
+    background: #dcfce7;
+    color: var(--success-color);
+}
+
+.ascvd-category.borderline {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.ascvd-category.intermediate {
+    background: #fed7aa;
+    color: #c2410c;
+}
+
+.ascvd-category.high {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.ascvd-bar {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.ascvd-zones {
+    display: flex;
+    height: 24px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ascvd-zones .zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: white;
+}
+
+.ascvd-zones .zone.low { background: var(--success-color); }
+.ascvd-zones .zone.borderline { background: #eab308; }
+.ascvd-zones .zone.intermediate { background: #f97316; }
+.ascvd-zones .zone.high { background: var(--danger-color); }
+
+.ascvd-marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 32px;
+    background: var(--text-color);
+    border-radius: 2px;
+    transform: translateX(-50%);
+}
+
+.ascvd-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.ascvd-note {
+    display: block;
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: #9333ea;
+}
+
+/* ASCVD Info Tooltip */
+.ascvd-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--text-muted);
+    color: white;
+    border-radius: 50%;
+    cursor: help;
+    margin-left: 6px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.ascvd-info-icon:hover .ascvd-info-tooltip,
+.ascvd-info-icon:focus .ascvd-info-tooltip {
+    display: block;
+}
+
+.ascvd-info-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 12px;
+    background: #1f2937;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.ascvd-info-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #1f2937;
+}
+
+.ascvd-info-tooltip .ascvd-cat {
+    font-weight: 600;
+}
+
+.ascvd-info-tooltip .ascvd-cat.low { color: #22c55e; }
+.ascvd-info-tooltip .ascvd-cat.borderline { color: #eab308; }
+.ascvd-info-tooltip .ascvd-cat.intermediate { color: #f97316; }
+.ascvd-info-tooltip .ascvd-cat.high { color: #ef4444; }
+
+/* Blood Pressure Card */
+.bp-reading {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.bp-values {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* BP value colors based on individual ranges */
+.bp-systolic.bp-normal,
+.bp-diastolic.bp-normal {
+    color: var(--success-color);
+}
+
+.bp-systolic.bp-elevated {
+    color: #eab308; /* yellow-500 - only systolic has elevated range */
+}
+
+.bp-systolic.bp-stage1,
+.bp-diastolic.bp-stage1 {
+    color: var(--warning-color);
+}
+
+.bp-systolic.bp-stage2,
+.bp-diastolic.bp-stage2 {
+    color: var(--danger-color);
+}
+
+.bp-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+.bp-status {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.bp-status.normal {
+    color: var(--success-color);
+}
+
+.bp-status.elevated {
+    color: #eab308; /* yellow-500 */
+}
+
+.bp-status.stage1 {
+    color: var(--warning-color);
+}
+
+.bp-status.stage2 {
+    color: #ea580c; /* orange-600 */
+}
+
+.bp-status.crisis {
+    color: var(--danger-color);
+    font-weight: 700;
+}
+
+.bp-status.high {
+    color: var(--danger-color);
+}
+
+/* BP Info Tooltip */
+.bp-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--text-muted);
+    color: white;
+    border-radius: 50%;
+    cursor: help;
+    margin-left: 6px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.bp-info-icon:hover .bp-info-tooltip,
+.bp-info-icon:focus .bp-info-tooltip {
+    display: block;
+}
+
+.bp-info-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 12px;
+    background: #1f2937;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.bp-info-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #1f2937;
+}
+
+.bp-info-tooltip .bp-cat {
+    font-weight: 600;
+}
+
+.bp-info-tooltip .bp-cat.normal { color: #22c55e; }
+.bp-info-tooltip .bp-cat.elevated { color: #eab308; }
+.bp-info-tooltip .bp-cat.stage1 { color: #f59e0b; }
+.bp-info-tooltip .bp-cat.stage2 { color: #ea580c; }
+.bp-info-tooltip .bp-cat.crisis { color: #ef4444; }
+
+.bp-target {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Charts */
+.chart-controls {
+    margin-bottom: 1.5rem;
+}
+
+.time-range {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.range-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.range-btn:hover {
+    border-color: var(--primary-color);
+}
+
+.range-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.chart-card {
+    min-height: 350px;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.chart-card.full-width {
+    grid-column: 1 / -1;
+    min-height: 400px;
+    max-height: 450px;
+}
+
+/* Chart containers with fixed heights - prevents infinite resize */
+.chart-container {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
+.chart-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-container-lg {
+    height: 320px;
+}
+
+.chart-container-mini {
+    position: relative;
+    height: 150px;
+    width: 100%;
+}
+
+.chart-container-mini canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Dashboard mini chart card */
+.trend-preview {
+    height: auto;
+}
+
+@media (max-width: 900px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Forms */
+.forms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .forms-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-help {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+/* Readings List */
+.readings-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.reading-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.reading-item:last-child {
+    border-bottom: none;
+}
+
+.reading-values {
+    font-weight: 600;
+}
+
+.reading-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.reading-delete {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Import Section */
+.import-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.import-card.full-width {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 1000px) {
+    .import-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.import-card p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.import-card input[type="file"] {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.import-status {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.import-status.success {
+    background: #dcfce7;
+    color: var(--success-color);
+}
+
+.import-status.error {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.staged-files {
+    margin-bottom: 1rem;
+}
+
+.staged-file {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.staged-file-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.staged-file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Data Summary */
+.data-summary {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+    .data-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.summary-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+}
+
+.summary-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 2rem;
+}
+
+/* BP Analysis */
+.bp-analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .bp-analysis-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bp-analysis-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bp-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bp-stat-row:last-child {
+    border-bottom: none;
+}
+
+.bp-stat-label {
+    flex: 1;
+    font-size: 0.875rem;
+}
+
+.bp-stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 80px;
+    text-align: right;
+}
+
+.bp-stat-value.above-target {
+    color: var(--danger-color);
+}
+
+.bp-stat-value.at-target {
+    color: var(--success-color);
+}
+
+.bp-stat-count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.bp-weekly-stats,
+.bp-monthly-stats {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.bp-above-target {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.bp-above-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: #fee2e2;
+    border-radius: 4px;
+    border-left: 3px solid var(--danger-color);
+}
+
+.bp-above-item .bp-value {
+    font-weight: 600;
+    color: var(--danger-color);
+}
+
+.bp-above-item .bp-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.bp-above-summary {
+    padding: 0.75rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.bp-above-summary .count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--danger-color);
+}
+
+.bp-above-summary .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.form-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Profile Page */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card-description {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Health Concerns */
+.concerns-list {
+    margin-bottom: 1.5rem;
+}
+
+.concern-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.concern-item.urgency-urgent {
+    border-left-color: var(--danger-color);
+    background: #fef2f2;
+}
+
+.concern-item.urgency-active {
+    border-left-color: var(--warning-color);
+    background: #fffbeb;
+}
+
+.concern-item.urgency-monitor {
+    border-left-color: var(--primary-color);
+}
+
+.concern-priority {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 28px;
+    text-align: center;
+}
+
+.concern-content {
+    flex: 1;
+}
+
+.concern-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.concern-notes {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.concern-urgency {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+}
+
+.concern-urgency.urgent {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.concern-urgency.active {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.concern-urgency.monitor {
+    background: #dbeafe;
+    color: var(--primary-color);
+}
+
+.concern-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.concern-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.concern-actions button:hover {
+    color: var(--text-color);
+}
+
+.add-concern {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.add-concern h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.concern-selector select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* Profile Settings */
+.profile-settings-card h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Dashboard Health Priorities Summary */
+.priorities-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.priority-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.priority-item.urgent {
+    background: #fef2f2;
+    border-left: 3px solid var(--danger-color);
+}
+
+.priority-item.active {
+    background: #fffbeb;
+    border-left: 3px solid var(--warning-color);
+}
+
+.priority-number {
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 20px;
+}
+
+.priority-name {
+    flex: 1;
+}
+
+.priorities-link {
+    display: block;
+    text-align: center;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.priorities-link:hover {
+    text-decoration: underline;
+}
+
+/* Utility Classes */
+.text-success { color: var(--success-color); }
+.text-warning { color: var(--warning-color); }
+.text-danger { color: var(--danger-color); }
+
+/* Seizure Tracking */
+.seizure-tracking {
+    display: none;
+}
+
+body.tracking-seizures .seizure-tracking {
+    display: block;
+}
+
+body.tracking-seizures .bp-tracking {
+    display: none;
+}
+
+.seizure-analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.seizure-analysis-section {
+    text-align: center;
+}
+
+.seizure-analysis-section h3 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.seizure-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seizure-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.seizure-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Seizure Info Tooltip */
+.seizure-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--text-muted);
+    color: white;
+    border-radius: 50%;
+    cursor: help;
+    margin-left: 6px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.seizure-info-icon:hover .seizure-info-tooltip,
+.seizure-info-icon:focus .seizure-info-tooltip {
+    display: block;
+}
+
+.seizure-info-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    padding: 12px;
+    background: #1f2937;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.seizure-info-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #1f2937;
+}
+
+/* Seizure episode list item */
+.seizure-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.seizure-item:last-child {
+    border-bottom: none;
+}
+
+.seizure-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.seizure-type {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.seizure-duration {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.seizure-datetime {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.seizure-trigger {
+    font-size: 0.75rem;
+    color: var(--warning-color);
+    margin-top: 0.25rem;
+}
+
+.seizure-details {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.seizure-details > div {
+    margin-bottom: 0.25rem;
+}
+
+.seizure-details > div:last-child {
+    margin-bottom: 0;
+}
+
+.seizure-detail-row {
+    color: var(--text-color);
+}
+
+.seizure-notes {
+    color: var(--text-color);
+    white-space: pre-wrap;
+}
+
+.seizure-item-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.seizure-item-actions .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Dashboard cards visibility by tracking type */
+body.tracking-seizures .bp-card,
+body.tracking-seizures .ascvd-card,
+body.tracking-seizures .metrics-card,
+body.tracking-seizures .goals-card {
+    display: none;
+}
+
+body.tracking-seizures .seizure-dashboard {
+    display: block;
+}
+
+.seizure-dashboard {
+    display: none;
+}
+
+/* Body Composition tracking type - de-emphasize BP, show labs */
+body.tracking-body-composition .bp-card {
+    display: none;
+}
+
+body.tracking-body-composition .labs-summary-card {
+    display: block;
+}
+
+.labs-summary-card {
+    display: none;
+}
+
+/* Labs Summary Card Styles */
+.labs-summary-card .lab-markers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.labs-summary-card .lab-marker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--bg-color);
+    border-radius: 6px;
+    border-left: 3px solid var(--border-color);
+}
+
+.labs-summary-card .lab-marker.abnormal {
+    border-left-color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.labs-summary-card .lab-marker.critical {
+    border-left-color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.labs-summary-card .lab-marker.normal {
+    border-left-color: var(--success-color);
+}
+
+.labs-summary-card .lab-marker.improved {
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.labs-summary-card .marker-name {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.labs-summary-card .marker-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.labs-summary-card .marker-trend {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.labs-summary-card .marker-trend.up {
+    color: var(--danger-color);
+}
+
+.labs-summary-card .marker-trend.down {
+    color: var(--success-color);
+}
+
+.labs-summary-card .lab-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    text-align: right;
+}
+
+/* Seizure Dashboard Card */
+.seizure-summary-card .seizure-count {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--primary-color);
+}
+
+.seizure-summary-card .seizure-period {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.seizure-free-days {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.seizure-free-days .days-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.seizure-free-days .days-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.medication-card .med-name {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.medication-card .med-dose {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* Medication Log Entries */
+.med-log-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.med-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.med-log-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.med-log-form {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--bg-color);
+    border-radius: 4px;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.med-log-datetime {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.med-log-side-effects {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.med-log-side-effects .side-effect {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.med-log-notes {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 0.5rem;
+    background: var(--bg-color);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.med-log-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.med-log-actions .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Seizure Trend Indicators */
+.trend-up {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.trend-down {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.trend-unchanged {
+    color: var(--text-muted);
+}
+
+/* =====================================================
+   WORKOUT TRACKING STYLES
+   ===================================================== */
+
+/* Workout tracking visibility */
+.workout-tracking {
+    display: none;
+}
+
+body.tracking-workouts .workout-tracking {
+    display: block;
+}
+
+/* Visible for all users; tracking type controls which cards appear */
+
+/* Workouts Grid Layout */
+.workouts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .workouts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Weekly Plan Card */
+.weekly-plan-card {
+    grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+    .weekly-plan-card {
+        grid-column: span 1;
+    }
+}
+
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+    .week-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.week-day {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    min-height: 80px;
+}
+
+.week-day.today {
+    border: 2px solid var(--primary-color);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.week-day-header {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.week-day.today .week-day-header {
+    color: var(--primary-color);
+}
+
+.scheduled-workout {
+    background: var(--card-bg);
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.scheduled-workout:hover {
+    background: var(--border-color);
+}
+
+.workout-name {
+    font-weight: 500;
+    font-size: 0.8rem;
+    display: block;
+}
+
+.exercise-count {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.rest-day {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.plan-actions {
+    margin-top: 1rem;
+}
+
+/* Today's Workout Card */
+.workout-title {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.workout-exercises-preview {
+    margin-bottom: 1rem;
+}
+
+.superset-preview {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.superset-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.exercise-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+}
+
+.exercise-preview .exercise-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 24px;
+}
+
+.exercise-preview .exercise-name {
+    flex: 1;
+}
+
+.exercise-preview .exercise-detail {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.rest-day-message {
+    text-align: center;
+    padding: 2rem;
+}
+
+.rest-day-message p:first-child {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Cardio Entry Form */
+.cardio-entry-card .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.hr-zone-info {
+    margin: 0.5rem 0;
+    color: var(--text-muted);
+}
+
+/* Recent Workouts List */
+.workout-log-item {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.workout-log-item.completed {
+    border-left: 3px solid var(--success-color);
+}
+
+.workout-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.workout-log-name {
+    font-weight: 600;
+}
+
+.workout-log-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.workout-log-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.workout-log-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Recent Cardio List */
+.cardio-log-item {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.cardio-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.cardio-type {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.cardio-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.cardio-log-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.hr-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.hr-badge.hr-in-zone {
+    background: rgba(22, 163, 74, 0.2);
+    color: #16a34a;
+}
+
+.hr-badge.hr-above {
+    background: rgba(220, 38, 38, 0.2);
+    color: #dc2626;
+}
+
+.hr-badge.hr-below {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.cardio-log-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Active Workout Overlay */
+.active-workout-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-color);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.active-workout-overlay.active {
+    display: block;
+}
+
+.active-workout-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.active-workout-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    position: sticky;
+    top: 0;
+    background: var(--bg-color);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.active-workout-header h2 {
+    margin: 0;
+}
+
+.workout-timer {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: monospace;
+    color: var(--primary-color);
+}
+
+.close-workout-btn {
+    margin-top: 2rem;
+    width: 100%;
+}
+
+/* Superset Group in Active Workout */
+.superset-group {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.superset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rest-indicator {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Exercise Item in Active Workout */
+.exercise-item {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.exercise-header .exercise-label {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.exercise-header .exercise-name {
+    font-weight: 600;
+    flex: 1;
+}
+
+/* Sets Grid */
+.sets-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.set-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--card-bg);
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.set-entry.completed {
+    background: rgba(22, 163, 74, 0.1);
+}
+
+.set-number {
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 20px;
+    text-align: center;
+}
+
+.set-weight,
+.set-reps {
+    width: 60px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.set-entry.completed .set-weight,
+.set-entry.completed .set-reps {
+    border-color: var(--success-color);
+}
+
+.weight-unit,
+.times {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.set-done-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.set-done-btn:hover {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.set-done-btn.done {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.exercise-notes input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+/* Template Editor Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.modal.active {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+}
+
+.modal-content h3 {
+    margin: 1.5rem 0 1rem;
+    font-size: 1rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Template Exercise Item */
+.template-exercise-item {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.exercise-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.exercise-inputs input,
+.exercise-inputs select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.exercise-name-input {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Responsive adjustments for exercise inputs */
+@media (max-width: 600px) {
+    .exercise-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .exercise-inputs input,
+    .exercise-inputs select {
+        width: 100% !important;
+    }
+}

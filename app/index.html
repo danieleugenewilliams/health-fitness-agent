@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+    <header>
+        <h1>Health Tracker</h1>
+        <div class="user-selector">
+            <select id="userSelect">
+                <option value="user1" selected>User 1</option>
+                <option value="user2">User 2</option>
+                <option value="user3">User 3</option>
+            </select>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="dashboard">Dashboard</button>
+        <button class="tab" data-tab="trends">Trends</button>
+        <button class="tab" data-tab="data-entry">Data Entry</button>
+        <button class="tab" data-tab="workouts">Workouts</button>
+        <button class="tab" data-tab="import">Import</button>
+        <button class="tab" data-tab="profile">Profile</button>
+    </nav>
+
+    <main>
+        <!-- Dashboard Tab -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <!-- Health Priorities Card -->
+                <div class="card priorities-card">
+                    <h2>Health Priorities</h2>
+                    <div class="priorities-summary" id="dashboardPriorities">
+                        <!-- Populated by JS -->
+                    </div>
+                    <a href="#" class="priorities-link" onclick="App.switchTab('profile'); return false;">Manage Priorities →</a>
+                </div>
+
+                <!-- Current Metrics Card -->
+                <div class="card metrics-card">
+                    <h2>Current Metrics</h2>
+                    <div class="metric-date" id="latestDate">--</div>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Weight</span>
+                            <span class="metric-value" id="currentWeight">--</span>
+                            <span class="metric-unit">lbs</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">BMI</span>
+                            <span class="metric-value" id="currentBMI">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Body Fat</span>
+                            <span class="metric-value" id="currentBodyFat">--</span>
+                            <span class="metric-unit">%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Visceral Fat</span>
+                            <span class="metric-value" id="currentVisceralFat">--</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Muscle Mass</span>
+                            <span class="metric-value" id="currentMuscleMass">--</span>
+                            <span class="metric-unit">lbs</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">BMR</span>
+                            <span class="metric-value" id="currentBMR">--</span>
+                            <span class="metric-unit">kcal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Pressure Card -->
+                <div class="card bp-card">
+                    <h2>Blood Pressure
+                        <span class="bp-info-icon" tabindex="0">?
+                            <span class="bp-info-tooltip">
+                                <strong>AHA Blood Pressure Categories</strong><br>
+                                <span class="bp-cat normal">Normal</span>: &lt;120 and &lt;80<br>
+                                <span class="bp-cat elevated">Elevated</span>: 120-129 and &lt;80<br>
+                                <span class="bp-cat stage1">Stage 1</span>: 130-139 or 80-89<br>
+                                <span class="bp-cat stage2">Stage 2</span>: &ge;140 or &ge;90<br>
+                                <span class="bp-cat crisis">Crisis</span>: &gt;180 and/or &gt;120
+                            </span>
+                        </span>
+                    </h2>
+                    <div class="bp-reading" id="latestBP">
+                        <div class="bp-values">
+                            <span class="bp-systolic">--</span>/<span class="bp-diastolic">--</span>
+                        </div>
+                        <div class="bp-date">--</div>
+                        <div class="bp-status">--</div>
+                    </div>
+                    <div class="bp-target" id="bpTargetDisplay">Target: &lt;--/--</div>
+                </div>
+
+                <!-- Seizure Dashboard Cards (for seizure-tracking users) -->
+                <div class="card seizure-dashboard seizure-summary-card">
+                    <h2>Seizure Episodes</h2>
+                    <div class="seizure-count" id="dashboardSeizureCount">0</div>
+                    <div class="seizure-period">in the last 30 days</div>
+                    <div class="seizure-free-days">
+                        <div class="days-count" id="seizureFreeDays">--</div>
+                        <div class="days-label">days since last episode</div>
+                    </div>
+                </div>
+
+                <div class="card seizure-dashboard medication-card">
+                    <h2>Current Medication</h2>
+                    <div id="dashboardMedication">
+                        <p class="text-muted">No medications listed</p>
+                    </div>
+                </div>
+
+                <div class="card seizure-dashboard">
+                    <h2>Recent Episodes</h2>
+                    <div id="dashboardRecentSeizures">
+                        <p class="text-muted">No episodes recorded</p>
+                    </div>
+                </div>
+
+                <!-- Seizure Trend Mini Chart (for seizure-tracking users) -->
+                <div class="card seizure-dashboard trend-preview">
+                    <h2>Daily Seizures (30 Days)</h2>
+                    <div class="chart-container-mini">
+                        <canvas id="miniSeizureChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Labs Summary Card (for body-composition tracking) -->
+                <div class="card labs-summary-card">
+                    <h2>Lab Markers</h2>
+                    <div class="lab-markers" id="labMarkersSummary">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="lab-date" id="labMarkersDate">--</div>
+                </div>
+
+                <!-- ASCVD Risk Card -->
+                <div class="card ascvd-card">
+                    <h2>10-Year ASCVD Risk
+                        <span class="ascvd-info-icon" tabindex="0">?
+                            <span class="ascvd-info-tooltip">
+                                <strong>ASCVD Risk Categories</strong><br>
+                                <span class="ascvd-cat low">Low</span>: &lt;5% (lifestyle changes)<br>
+                                <span class="ascvd-cat borderline">Borderline</span>: 5-7.5%<br>
+                                <span class="ascvd-cat intermediate">Intermediate</span>: 7.5-20% (statin recommended)<br>
+                                <span class="ascvd-cat high">High</span>: &ge;20% (high-intensity statin)<br><br>
+                                <em>Chance of heart attack or stroke in next 10 years based on Pooled Cohort Equations (2013 ACC/AHA)</em>
+                            </span>
+                        </span>
+                    </h2>
+                    <div class="ascvd-score">
+                        <span class="ascvd-value" id="ascvdScore">--</span>
+                        <span class="ascvd-percent">%</span>
+                    </div>
+                    <div class="ascvd-category" id="ascvdCategory">--</div>
+                    <div class="ascvd-bar">
+                        <div class="ascvd-zones">
+                            <div class="zone low" style="width: 25%"><span>Low</span></div>
+                            <div class="zone borderline" style="width: 12.5%"><span>Border</span></div>
+                            <div class="zone intermediate" style="width: 37.5%"><span>Intermediate</span></div>
+                            <div class="zone high" style="width: 25%"><span>High</span></div>
+                        </div>
+                        <div class="ascvd-marker" id="ascvdMarker"></div>
+                    </div>
+                    <div class="ascvd-details" id="ascvdDetails"></div>
+                </div>
+
+                <!-- Recent Trends Mini Chart -->
+                <div class="card trend-preview">
+                    <h2>Weight Trend (30 Days)</h2>
+                    <div class="chart-container-mini">
+                        <canvas id="miniWeightChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Goal Progress Card -->
+                <div class="card goals-card">
+                    <h2>Goal Progress</h2>
+                    <div class="goals-list">
+                        <div class="goal" id="goalWeight">
+                            <div class="goal-header">
+                                <span class="goal-label">Weight</span>
+                                <span class="goal-values">
+                                    <span class="goal-current">--</span> / <span class="goal-target" id="goalWeightTarget">--</span> lbs
+                                </span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="goal-remaining">-- lbs to go</span>
+                        </div>
+                        <div class="goal" id="goalVisceralFat">
+                            <div class="goal-header">
+                                <span class="goal-label">Visceral Fat</span>
+                                <span class="goal-values">
+                                    <span class="goal-current">--</span> / <span class="goal-target" id="goalVisceralFatTarget">&lt;--</span>
+                                </span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="goal-remaining">-- to go</span>
+                        </div>
+                        <div class="goal" id="goalBMI">
+                            <div class="goal-header">
+                                <span class="goal-label">BMI</span>
+                                <span class="goal-values">
+                                    <span class="goal-current">--</span> / <span class="goal-target" id="goalBMITarget">&lt;--</span>
+                                </span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="goal-remaining">-- to go</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Trends Tab -->
+        <section id="trends" class="tab-content">
+            <div class="chart-controls">
+                <div class="time-range">
+                    <button class="range-btn" data-days="30">30 Days</button>
+                    <button class="range-btn active" data-days="90">90 Days</button>
+                    <button class="range-btn" data-days="180">180 Days</button>
+                    <button class="range-btn" data-days="all">All Time</button>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <!-- BP Tracking Charts -->
+                <div class="card chart-card bp-tracking">
+                    <h2>Weight</h2>
+                    <div class="chart-container">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card bp-tracking">
+                    <h2>Body Composition</h2>
+                    <div class="chart-container">
+                        <canvas id="compositionChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card bp-tracking">
+                    <h2>Visceral Fat</h2>
+                    <div class="chart-container">
+                        <canvas id="visceralChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card bp-tracking">
+                    <h2>Blood Pressure</h2>
+                    <div class="chart-container">
+                        <canvas id="bpChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card full-width bp-tracking">
+                    <h2>Body Measurements</h2>
+                    <div class="chart-container chart-container-lg">
+                        <canvas id="measurementsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Seizure Tracking Charts -->
+                <div class="card chart-card seizure-tracking full-width">
+                    <h2>Seizure Frequency</h2>
+                    <div class="chart-container">
+                        <canvas id="seizureFrequencyChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card seizure-tracking">
+                    <h2>Medication Adherence</h2>
+                    <div class="chart-container">
+                        <canvas id="medicationAdherenceChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card seizure-tracking">
+                    <h2>Side Effects</h2>
+                    <div class="chart-container">
+                        <canvas id="sideEffectsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Entry Tab -->
+        <section id="data-entry" class="tab-content">
+            <div class="forms-grid">
+                <div class="card form-card bp-tracking">
+                    <h2>Blood Pressure Entry</h2>
+                    <form id="bpForm">
+                        <div class="form-group">
+                            <label for="bpDate">Date</label>
+                            <input type="date" id="bpDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bpTime">Time</label>
+                            <input type="time" id="bpTime">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="systolic">Systolic</label>
+                                <input type="number" id="systolic" min="70" max="250" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="diastolic">Diastolic</label>
+                                <input type="number" id="diastolic" min="40" max="150" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bpPulse">Pulse (optional)</label>
+                            <input type="number" id="bpPulse" min="40" max="200">
+                        </div>
+                        <div class="form-group">
+                            <label for="bpSetting">Setting</label>
+                            <select id="bpSetting">
+                                <option value="home">Home</option>
+                                <option value="lab">Lab/Clinic</option>
+                                <option value="pharmacy">Pharmacy</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bpNotes">Notes</label>
+                            <textarea id="bpNotes" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save BP Reading</button>
+                    </form>
+                </div>
+
+                <div class="card form-card bp-tracking">
+                    <h2>Recent BP Readings</h2>
+                    <div class="readings-list" id="bpReadingsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- BP Analysis Card -->
+                <div class="card form-card full-width bp-tracking">
+                    <h2>Blood Pressure Analysis
+                        <span class="bp-info-icon" tabindex="0">?
+                            <span class="bp-info-tooltip">
+                                <strong>AHA Blood Pressure Categories</strong><br>
+                                <span class="bp-cat normal">Normal</span>: &lt;120 and &lt;80<br>
+                                <span class="bp-cat elevated">Elevated</span>: 120-129 and &lt;80<br>
+                                <span class="bp-cat stage1">Stage 1</span>: 130-139 or 80-89<br>
+                                <span class="bp-cat stage2">Stage 2</span>: &ge;140 or &ge;90<br>
+                                <span class="bp-cat crisis">Crisis</span>: &gt;180 and/or &gt;120
+                            </span>
+                        </span>
+                    </h2>
+                    <div class="bp-analysis-grid">
+                        <div class="bp-analysis-section">
+                            <h3>By Time of Day</h3>
+                            <div class="bp-time-stats" id="bpTimeStats">
+                                <div class="bp-stat-row">
+                                    <span class="bp-stat-label">Morning (before noon)</span>
+                                    <span class="bp-stat-value" id="bpMorningAvg">--/--</span>
+                                    <span class="bp-stat-count" id="bpMorningCount">(0 readings)</span>
+                                </div>
+                                <div class="bp-stat-row">
+                                    <span class="bp-stat-label">Evening (after noon)</span>
+                                    <span class="bp-stat-value" id="bpEveningAvg">--/--</span>
+                                    <span class="bp-stat-count" id="bpEveningCount">(0 readings)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bp-analysis-section">
+                            <h3>Weekly Averages</h3>
+                            <div class="bp-weekly-stats" id="bpWeeklyStats">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="bp-analysis-section">
+                            <h3>Monthly Averages</h3>
+                            <div class="bp-monthly-stats" id="bpMonthlyStats">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="bp-analysis-section">
+                            <h3>Above Target (<span id="bpAboveTargetLabel">&gt;--/--</span>)</h3>
+                            <div class="bp-above-target" id="bpAboveTarget">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seizure Tracking Section (for seizure-tracking users) -->
+                <div class="card form-card seizure-tracking">
+                    <h2>Log Seizure</h2>
+                    <form id="seizureForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="seizureDate">Date</label>
+                                <input type="date" id="seizureDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="seizureDuration">Duration (seconds, optional)</label>
+                                <input type="number" id="seizureDuration" min="1" max="600" placeholder="e.g., 10">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="seizureNotes">Notes (anything abnormal)</label>
+                            <textarea id="seizureNotes" rows="3" placeholder="What was he doing? Any observations?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log Seizure</button>
+                    </form>
+                </div>
+
+                <div class="card form-card seizure-tracking">
+                    <h2>Recent Seizure Episodes</h2>
+                    <div class="readings-list" id="seizureEpisodesList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="card form-card seizure-tracking">
+                    <h2>Medication Log Entry</h2>
+                    <form id="medicationLogForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="medLogDate">Date</label>
+                                <input type="date" id="medLogDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="medLogTime">Time</label>
+                                <input type="time" id="medLogTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="medLogMedication">Medication</label>
+                            <select id="medLogMedication">
+                                <!-- Populated from profile medications -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="medLogForm">Form Taken</label>
+                            <select id="medLogForm">
+                                <option value="liquid">Liquid</option>
+                                <option value="pill">Pill</option>
+                                <option value="chewable">Chewable</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Side Effects</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogNausea"> Nausea
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogVomited"> Vomited
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogDiarrhea"> Diarrhea
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogItchiness"> Itchiness
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogThroatBurning"> Throat burning
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogUpsetStomach"> Upset stomach
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogHiccups"> Hiccups
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogItchyThroat"> Itchy throat
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogCoughing"> Coughing
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogGagging"> Gagging
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="medLogHeadache"> Headache
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="medLogNotes">Notes</label>
+                            <textarea id="medLogNotes" rows="2" placeholder="Any other observations..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log Medication</button>
+                    </form>
+                </div>
+
+                <div class="card form-card seizure-tracking">
+                    <h2>Recent Medication Logs</h2>
+                    <div class="readings-list" id="medicationLogList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="card form-card full-width seizure-tracking">
+                    <h2>Seizure Analysis
+                        <span class="seizure-info-icon" tabindex="0">?
+                            <span class="seizure-info-tooltip">
+                                <strong>Tracking Seizure Episodes</strong><br>
+                                Record date, time, duration, and potential triggers.<br>
+                                This helps identify patterns and evaluate medication effectiveness.<br><br>
+                                <em>Always consult with your neurologist about seizure management.</em>
+                            </span>
+                        </span>
+                    </h2>
+                    <div class="seizure-analysis-grid">
+                        <div class="seizure-analysis-section">
+                            <h3>Daily Average</h3>
+                            <div class="seizure-stat">
+                                <span class="seizure-stat-value" id="seizureDailyAvg">--</span>
+                                <span class="seizure-stat-label">per day (7-day)</span>
+                            </div>
+                        </div>
+                        <div class="seizure-analysis-section">
+                            <h3>Last 7 Days</h3>
+                            <div class="seizure-stat">
+                                <span class="seizure-stat-value" id="seizures7Days">0</span>
+                                <span class="seizure-stat-label">episodes</span>
+                            </div>
+                        </div>
+                        <div class="seizure-analysis-section">
+                            <h3>Previous 7 Days</h3>
+                            <div class="seizure-stat">
+                                <span class="seizure-stat-value" id="seizuresPrev7Days">0</span>
+                                <span class="seizure-stat-label">episodes</span>
+                            </div>
+                        </div>
+                        <div class="seizure-analysis-section">
+                            <h3>Weekly Trend</h3>
+                            <div id="seizureWeeklyTrend">
+                                <span class="trend-unchanged">Not enough data</span>
+                            </div>
+                        </div>
+                        <div class="seizure-analysis-section">
+                            <h3>Daily Trend</h3>
+                            <div id="seizureDailyTrend">
+                                <span class="trend-unchanged">Not enough data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Import Tab -->
+        <section id="import" class="tab-content">
+            <div class="import-grid">
+                <div class="card import-card">
+                    <h2>Import VeSync CSV</h2>
+                    <p>Import weight data from VeSync scale export.</p>
+                    <input type="file" id="vesyncFile" accept=".csv">
+                    <button class="btn btn-primary" id="importVesync">Import VeSync Data</button>
+                    <div class="import-status" id="vesyncStatus"></div>
+                </div>
+
+                <div class="card import-card">
+                    <h2>Import Measurements CSV</h2>
+                    <p>Import body measurements from CSV.</p>
+                    <input type="file" id="measurementsFile" accept=".csv">
+                    <button class="btn btn-primary" id="importMeasurements">Import Measurements</button>
+                    <div class="import-status" id="measurementsStatus"></div>
+                </div>
+
+                <div class="card import-card">
+                    <h2>Import Staged JSON</h2>
+                    <p>Import AI-extracted data from InBody scans or lab reports.</p>
+                    <div class="staged-files" id="stagedFiles">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="btn btn-secondary" id="refreshStaged">Refresh Staged Files</button>
+                </div>
+
+                <div class="card import-card full-width">
+                    <h2>Data Summary</h2>
+                    <div class="data-summary" id="dataSummary">
+                        <div class="summary-item">
+                            <span class="summary-label">Scale Readings:</span>
+                            <span class="summary-value" id="scaleCount">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">BP Readings:</span>
+                            <span class="summary-value" id="bpCount">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Measurements:</span>
+                            <span class="summary-value" id="measurementCount">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">InBody Scans:</span>
+                            <span class="summary-value" id="inbodyCount">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Lab Reports:</span>
+                            <span class="summary-value" id="labCount">0</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="exportData">Export All Data (JSON)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workouts Tab -->
+        <section id="workouts" class="tab-content">
+            <div class="workouts-grid">
+                <!-- Weekly Plan Card -->
+                <div class="card weekly-plan-card">
+                    <h2>Weekly Plan</h2>
+                    <div class="week-grid" id="weeklyPlanGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="plan-actions">
+                        <button class="btn btn-secondary" onclick="App.openTemplateEditor()">+ Add Workout</button>
+                    </div>
+                </div>
+
+                <!-- Today's Workout Card -->
+                <div class="card todays-workout-card">
+                    <h2>Today's Workout</h2>
+                    <div id="todaysWorkoutContent">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="btn btn-primary" id="startWorkoutBtn" style="display: none;">Start Workout</button>
+                </div>
+
+                <!-- Quick Cardio Entry Card -->
+                <div class="card cardio-entry-card">
+                    <h2>Log Cardio</h2>
+                    <form id="cardioForm" onsubmit="event.preventDefault(); App.saveCardioLog();">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardioDate">Date</label>
+                                <input type="date" id="cardioDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardioType">Activity</label>
+                                <select id="cardioType" required>
+                                    <option value="">Select...</option>
+                                    <option value="walk">Walk</option>
+                                    <option value="run">Run</option>
+                                    <option value="bike">Bike</option>
+                                    <option value="elliptical">Elliptical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardioDistance">Distance (miles)</label>
+                                <input type="number" id="cardioDistance" step="0.01" placeholder="2.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="cardioDuration">Duration (min)</label>
+                                <input type="number" id="cardioDuration" placeholder="30">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardioSpeed">Speed (mph)</label>
+                                <input type="number" id="cardioSpeed" step="0.1" placeholder="3.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="cardioHR">Avg Heart Rate</label>
+                                <input type="number" id="cardioHR" placeholder="125">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardioNotes">Notes</label>
+                            <input type="text" id="cardioNotes" placeholder="Optional notes...">
+                        </div>
+                        <div class="hr-zone-info">
+                            <small>Target HR zone: 120-125 bpm</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log Cardio</button>
+                    </form>
+                </div>
+
+                <!-- Recent Workouts Card -->
+                <div class="card recent-workouts-card">
+                    <h2>Recent Workouts</h2>
+                    <div class="workouts-list" id="recentWorkoutsList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recent Cardio Card -->
+                <div class="card recent-cardio-card">
+                    <h2>Recent Cardio</h2>
+                    <div class="cardio-list" id="recentCardioList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Workout Overlay -->
+            <div class="active-workout-overlay" id="activeWorkoutOverlay">
+                <!-- Populated by JS when workout starts -->
+            </div>
+
+            <!-- Template Editor Modal -->
+            <div class="modal" id="templateEditorModal">
+                <div class="modal-content">
+                    <h2>Edit Workout Template</h2>
+                    <form id="templateForm" onsubmit="event.preventDefault(); App.saveTemplate();">
+                        <div class="form-group">
+                            <label for="templateName">Workout Name</label>
+                            <input type="text" id="templateName" placeholder="Lower Body (Glute-Focused)" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="templateDay">Day of Week</label>
+                                <select id="templateDay">
+                                    <option value="">Not Scheduled</option>
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="templateNotes">Notes</label>
+                            <input type="text" id="templateNotes" placeholder="Optional workout notes...">
+                        </div>
+
+                        <h3>Exercises</h3>
+                        <div class="template-exercises" id="templateExercises">
+                            <!-- Populated by JS -->
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="App.addTemplateExercise()">+ Add Exercise</button>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-danger" id="deleteTemplateBtn" style="display: none; margin-right: auto;">Delete</button>
+                            <button type="button" class="btn btn-secondary" onclick="App.closeTemplateEditor()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Template</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Tab -->
+        <section id="profile" class="tab-content">
+            <div class="profile-grid">
+                <!-- Health Concerns Card -->
+                <div class="card concerns-card">
+                    <h2>Health Priorities</h2>
+                    <p class="card-description">Select and prioritize your top health concerns. These will be highlighted on your dashboard.</p>
+
+                    <div class="concerns-list" id="concernsList">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="add-concern">
+                        <h3>Add Health Concern</h3>
+                        <div class="concern-selector">
+                            <select id="concernSelect">
+                                <option value="">Select a concern...</option>
+                                <optgroup label="Cardiovascular">
+                                    <option value="high-bp">High Blood Pressure</option>
+                                    <option value="cholesterol">High Cholesterol / Lipids</option>
+                                    <option value="heart-disease">Heart Disease Risk</option>
+                                </optgroup>
+                                <optgroup label="Metabolic">
+                                    <option value="insulin-resistance">Insulin Resistance / Pre-diabetes</option>
+                                    <option value="diabetes">Diabetes Management</option>
+                                    <option value="metabolic-syndrome">Metabolic Syndrome</option>
+                                    <option value="visceral-fat">Visceral Fat</option>
+                                </optgroup>
+                                <optgroup label="Body Composition">
+                                    <option value="weight-loss">Weight Loss</option>
+                                    <option value="muscle-gain">Muscle Building</option>
+                                    <option value="body-fat">Body Fat Reduction</option>
+                                </optgroup>
+                                <optgroup label="Organ Health">
+                                    <option value="liver">Liver Health (Elevated Enzymes)</option>
+                                    <option value="kidney">Kidney Function</option>
+                                    <option value="thyroid">Thyroid Issues</option>
+                                </optgroup>
+                                <optgroup label="Other">
+                                    <option value="inflammation">Chronic Inflammation</option>
+                                    <option value="allergies">Allergies</option>
+                                    <option value="sleep">Sleep Quality</option>
+                                    <option value="energy">Energy / Fatigue</option>
+                                    <option value="custom">Custom Concern...</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customConcernGroup" style="display: none;">
+                            <label for="customConcernName">Custom Concern Name</label>
+                            <input type="text" id="customConcernName" placeholder="Enter concern name">
+                        </div>
+                        <div class="form-group">
+                            <label for="concernNotes">Notes (optional)</label>
+                            <textarea id="concernNotes" rows="2" placeholder="Details, targets, or context..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="concernUrgency">Urgency Level</label>
+                            <select id="concernUrgency">
+                                <option value="monitor">Monitor - Track over time</option>
+                                <option value="active">Active - Working on it</option>
+                                <option value="urgent">Urgent - Needs immediate attention</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="addConcern">Add Concern</button>
+                    </div>
+                </div>
+
+                <!-- Profile Settings Card -->
+                <div class="card profile-settings-card">
+                    <h2>Profile Settings</h2>
+                    <form id="profileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profileAge">Age</label>
+                                <input type="number" id="profileAge" min="1" max="120">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileHeight">Height (inches)</label>
+                                <input type="number" id="profileHeight" min="48" max="96">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profileSex">Sex</label>
+                                <select id="profileSex">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Race/Ethnicity (for ASCVD calc)</label>
+                                <div class="checkbox-group" id="profileRaceGroup">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="profileRace" value="black"> Black
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="profileRace" value="asian"> Asian
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="profileRace" value="white"> White
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="profileRace" value="hispanic"> Hispanic/Latino
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="profileRace" value="other"> Other
+                                    </label>
+                                </div>
+                                <small class="form-help">Select all that apply. ASCVD uses "Black" as a risk factor.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Risk Factors</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="profileSmoker"> Current Smoker
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="profileBPMeds"> On BP Medication
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="profileDiabetic"> Diabetic
+                                </label>
+                            </div>
+                        </div>
+                        <h3>Goals</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="inputGoalWeight">Target Weight (lbs)</label>
+                                <input type="number" id="inputGoalWeight" min="20" max="400">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputGoalBMI">Target BMI</label>
+                                <input type="number" id="inputGoalBMI" min="15" max="40" step="0.1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="inputGoalVisceralFat">Target Visceral Fat</label>
+                                <input type="number" id="inputGoalVisceralFat" min="1" max="20">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputGoalSystolic">Target Systolic BP</label>
+                                <input type="number" id="inputGoalSystolic" min="90" max="180">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="inputGoalDiastolic">Target Diastolic BP</label>
+                                <input type="number" id="inputGoalDiastolic" min="50" max="120">
+                            </div>
+                            <div class="form-group">
+                                <!-- Empty for alignment -->
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Health Tracker Prototype | Data stored locally</p>
+    </footer>
+
+    <script src="import.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js?v=3"></script>
+</body>
+</html>
