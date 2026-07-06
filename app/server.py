@@ -368,6 +368,23 @@ class HealthTrackerHandler(SimpleHTTPRequestHandler):
         body = self.rfile.read(content_length)
         return json.loads(body.decode('utf-8'))
 
+    def send_head(self):
+        # Defense in depth: never serve the raw database or its backups as static
+        # files, even to a local request. Both do_GET and do_HEAD funnel through
+        # send_head(), so guarding here closes every file-serving path (including
+        # HEAD, which would otherwise leak the DB's exact size and mtime) at the
+        # single point where the path is resolved. Match on the RESOLVED
+        # filesystem path translate_path() will open -- it decodes %xx escapes and
+        # collapses dot-segments -- lowercased so case-variant requests can't slip
+        # past on the case-insensitive filesystems this runs on (macOS, Windows).
+        # BACKUP_DIR lives under DATA_DIR, so the DATA_DIR check covers backups.
+        served = os.path.realpath(self.translate_path(self.path)).lower()
+        protected = os.path.realpath(DATA_DIR).lower()
+        if served == protected or served.startswith(protected + os.sep):
+            self.send_error_json(403, 'Forbidden')
+            return None
+        return super().send_head()
+
     def do_GET(self):
         """Handle GET requests."""
         parsed = urlparse(self.path)
@@ -433,24 +450,8 @@ class HealthTrackerHandler(SimpleHTTPRequestHandler):
                 self.send_error_json(404, f'User {username} not found')
             return
 
-        # Defense in depth: never serve the raw database or its backups as static
-        # files, even to a local request. Everything health-related is reached
-        # through the /api routes above; the static handler is only for the
-        # dashboard's HTML/JS/CSS. Match on the RESOLVED filesystem path that the
-        # static handler will actually open -- translate_path decodes %xx escapes
-        # and collapses dot-segments -- so percent-encoded or dot-segment
-        # requests can't slip past. Lowercase both sides to stay safe on the
-        # case-insensitive filesystems this tool runs on (macOS, Windows), where
-        # /DATA resolves to the same file as /data. (os.path.normcase would be a
-        # no-op here, since posix normcase does nothing.)
-        served = os.path.realpath(self.translate_path(self.path)).lower()
-        for protected in (DATA_DIR, BACKUP_DIR):
-            protected = os.path.realpath(protected).lower()
-            if served == protected or served.startswith(protected + os.sep):
-                self.send_error_json(403, 'Forbidden')
-                return
-
-        # Serve static files
+        # Serve static files. The data/ and backups/ block lives in send_head()
+        # below, which both do_GET and do_HEAD funnel through.
         super().do_GET()
 
     def do_POST(self):
