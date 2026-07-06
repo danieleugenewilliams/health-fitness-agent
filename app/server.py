@@ -433,6 +433,23 @@ class HealthTrackerHandler(SimpleHTTPRequestHandler):
                 self.send_error_json(404, f'User {username} not found')
             return
 
+        # Defense in depth: never serve the raw database or its backups as static
+        # files, even to a local request. Everything health-related is reached
+        # through the /api routes above; the static handler is only for the
+        # dashboard's HTML/JS/CSS. Match on the RESOLVED filesystem path that the
+        # static handler will actually open -- translate_path decodes %xx escapes
+        # and collapses dot-segments -- so percent-encoded or dot-segment
+        # requests can't slip past. Lowercase both sides to stay safe on the
+        # case-insensitive filesystems this tool runs on (macOS, Windows), where
+        # /DATA resolves to the same file as /data. (os.path.normcase would be a
+        # no-op here, since posix normcase does nothing.)
+        served = os.path.realpath(self.translate_path(self.path)).lower()
+        for protected in (DATA_DIR, BACKUP_DIR):
+            protected = os.path.realpath(protected).lower()
+            if served == protected or served.startswith(protected + os.sep):
+                self.send_error_json(403, 'Forbidden')
+                return
+
         # Serve static files
         super().do_GET()
 
@@ -1306,7 +1323,11 @@ def run():
         print(f"WARNING: Database not found at {DB_PATH}")
         print("Run 'python migrate_to_sqlite.py' first to create and populate the database.")
 
-    server = HTTPServer(('', PORT), HealthTrackerHandler)
+    # Bind to loopback only. The dashboard is meant to be opened locally on this
+    # machine (phone access goes through the Telegram agent, not this server), so
+    # there is no reason to listen on all interfaces — doing so would expose the
+    # health database to every host on the local network with no authentication.
+    server = HTTPServer(('127.0.0.1', PORT), HealthTrackerHandler)
     print(f"Health Tracker server running at http://localhost:{PORT}")
     print(f"Database: {DB_PATH}")
     print("Press Ctrl+C to stop")
