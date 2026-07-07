@@ -368,6 +368,23 @@ class HealthTrackerHandler(SimpleHTTPRequestHandler):
         body = self.rfile.read(content_length)
         return json.loads(body.decode('utf-8'))
 
+    def send_head(self):
+        # Defense in depth: never serve the raw database or its backups as static
+        # files, even to a local request. Both do_GET and do_HEAD funnel through
+        # send_head(), so guarding here closes every file-serving path (including
+        # HEAD, which would otherwise leak the DB's exact size and mtime) at the
+        # single point where the path is resolved. Match on the RESOLVED
+        # filesystem path translate_path() will open -- it decodes %xx escapes and
+        # collapses dot-segments -- lowercased so case-variant requests can't slip
+        # past on the case-insensitive filesystems this runs on (macOS, Windows).
+        # BACKUP_DIR lives under DATA_DIR, so the DATA_DIR check covers backups.
+        served = os.path.realpath(self.translate_path(self.path)).lower()
+        protected = os.path.realpath(DATA_DIR).lower()
+        if served == protected or served.startswith(protected + os.sep):
+            self.send_error_json(403, 'Forbidden')
+            return None
+        return super().send_head()
+
     def do_GET(self):
         """Handle GET requests."""
         parsed = urlparse(self.path)
@@ -433,7 +450,8 @@ class HealthTrackerHandler(SimpleHTTPRequestHandler):
                 self.send_error_json(404, f'User {username} not found')
             return
 
-        # Serve static files
+        # Serve static files. The data/ and backups/ block lives in send_head()
+        # below, which both do_GET and do_HEAD funnel through.
         super().do_GET()
 
     def do_POST(self):
@@ -1306,7 +1324,11 @@ def run():
         print(f"WARNING: Database not found at {DB_PATH}")
         print("Run 'python migrate_to_sqlite.py' first to create and populate the database.")
 
-    server = HTTPServer(('', PORT), HealthTrackerHandler)
+    # Bind to loopback only. The dashboard is meant to be opened locally on this
+    # machine (phone access goes through the Telegram agent, not this server), so
+    # there is no reason to listen on all interfaces — doing so would expose the
+    # health database to every host on the local network with no authentication.
+    server = HTTPServer(('127.0.0.1', PORT), HealthTrackerHandler)
     print(f"Health Tracker server running at http://localhost:{PORT}")
     print(f"Database: {DB_PATH}")
     print("Press Ctrl+C to stop")
